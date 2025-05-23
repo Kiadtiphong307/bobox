@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: bobox_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    container_name: bobox_backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+      - /app/tmp
+    working_dir: /app
+    command: air 
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: bobox_mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: bobox_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
