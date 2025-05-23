@@ -143,17 +143,19 @@ backend/
 ### users
 - id (PK)
 - username
+- fullname
 - email
-- password_hash
+- password
 - role ["user", "admin"]
 
 ### products
 - id (PK)
 - name
-- type ["topup", "game_id"]
+- category ["topup", "game_id"]
 - description
 - price
 - stock
+- create_at
 
 ### discounts
 - id (PK)
