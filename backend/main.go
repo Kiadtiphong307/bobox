@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/database"
+	"backend/routes"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -11,9 +12,7 @@ func main() {
 
 	database.ConnectDB()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	routes.AuthRoutes(app)
 
 	app.Listen(":8080")
 }
