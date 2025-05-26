@@ -2,6 +2,7 @@ package controller
 
 import (
 	"backend/service"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,8 +14,8 @@ func GetAllProducts(c *fiber.Ctx) error {
 	return service.HandleGetAllProducts(c)
 }
 
-func GetProductById(c *fiber.Ctx) error {
-	return service.HandleGetProductById(c)
+func GetProductBySlug(c *fiber.Ctx) error {
+	return service.HandleGetProductBySlug(c)
 }
 
 func UpdateProduct(c *fiber.Ctx) error {

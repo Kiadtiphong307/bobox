@@ -9,6 +9,6 @@ import (
 func ProductRoutes(router fiber.Router) {
 	api := router.Group("/products")
 	api.Get("/", controller.GetAllProducts)
-	api.Get("/:id", controller.GetProductById)
+	api.Get("/:slug", controller.GetProductBySlug)
 
 }

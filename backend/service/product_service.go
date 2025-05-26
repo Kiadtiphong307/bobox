@@ -5,6 +5,7 @@ import (
 	"backend/models"
 
 	"github.com/gofiber/fiber/v2"
+	"strings"
 )
 
 // คือฟังก์ชันที่จะจัดการกับการสร้างสินค้า
@@ -13,6 +14,9 @@ func HandleCreateProduct(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid product format")
 	}
+
+	body.Slug = strings.ToLower(strings.ReplaceAll(body.Name, " ", "-"))
+
 	if err := database.DB.Create(&body).Error; err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to create product")
 	}
@@ -23,10 +27,10 @@ func HandleCreateProduct(c *fiber.Ctx) error {
 }
 
 // คือฟังก์ชันที่จะจัดการกับการดึงข้อมูลสินค้าเฉพาะตาม ID
-func HandleGetProductById(c *fiber.Ctx) error {
-	id := c.Params("id")
+func HandleGetProductBySlug(c *fiber.Ctx) error {
+	slug := c.Params("slug")
 	var product models.Product
-	if err := database.DB.First(&product, id).Error; err != nil {
+	if err := database.DB.Where("slug = ?", slug).First(&product).Error; err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Product not found")
 	}
 	return c.JSON(fiber.Map{

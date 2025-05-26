@@ -19,6 +19,8 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/gofiber/contrib/jwt v1.1.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
+	github.com/gosimple/slug v1.15.0 // indirect
+	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	golang.org/x/net v0.40.0 // indirect
 )
