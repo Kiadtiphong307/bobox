@@ -38,5 +38,6 @@ func ConnectDB() {
 	db.AutoMigrate(
 		&models.User{},
 		&models.Product{},
+		&models.Discount{},
 	)
 }

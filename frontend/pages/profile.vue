@@ -5,6 +5,7 @@
       <div v-if="user">
         <p><strong>Username:</strong> {{ user.username }}</p>
         <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Role:</strong> {{ user.role }}</p>
         <button class="btn btn-danger mt-4" @click="onLogout">ออกจากระบบ</button>
       </div>
     </div>
