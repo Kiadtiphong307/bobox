@@ -11,18 +11,9 @@
   </template>
   
   <script setup lang="ts">
-  const email = ref('')
-  const password = ref('')
-  const router = useRouter()
-  const { login } = useAuth()
-  
-  async function onLogin() {
-    try {
-      await login({ email: email.value, password: password.value })
-      router.push('/profile')
-    } catch (e) {
-      alert('Login Failed')
-    }
-  }
+  import { useAuthForm } from '~/Constants/auth/useAuthForm'
+
+  const { email, password, onLogin } = useAuthForm()
   </script>
+  
   

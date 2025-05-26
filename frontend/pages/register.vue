@@ -10,21 +10,12 @@
       </form>
     </div>
   </template>
-  
+
   <script setup lang="ts">
-  const username = ref('')
-  const email = ref('')
-  const password = ref('')
-  const router = useRouter()
-  const { register } = useAuth()
-  
-  async function onRegister() {
-    try {
-      await register({ username: username.value, email: email.value, password: password.value })
-      router.push('/profile')
-    } catch (e) {
-      alert('Register Failed')
-    }
-  }
+    import { useAuthForm } from '~/Constants/auth/useAuthForm'
+    
+  const { username, email, password, onRegister } = useAuthForm()
   </script>
+  
+  
   

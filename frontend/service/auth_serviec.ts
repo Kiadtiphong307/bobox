@@ -1,11 +1,10 @@
 import type { User } from '@/types/user'
-
-const baseURL = '/api/auth'
+import { BASE_API_URL  } from '~/Constants/api/ApiAuth'
 
 // คือฟังก์ชันสำหรับการเข้าสู่ระบบ
 export async function loginService(payload: { email: string; password: string }): Promise<{ token: string; user: User }> {
   try {
-    const res = await $fetch<{ token: string; user: User }>(`${baseURL}/login`, {
+    const res = await $fetch<{ token: string; user: User }>(`${BASE_API_URL }/login`, {
       method: 'POST',
       body: payload,
     })
@@ -22,7 +21,7 @@ export async function registerService(payload:
         password: string 
     }): Promise<{ token: string; user: User }> {
   try {
-    const res = await $fetch<{ token: string; user: User }>(`${baseURL}/register`, {
+    const res = await $fetch<{ token: string; user: User }>(`${BASE_API_URL }/register`, {
       method: 'POST',
       body: payload,
     })
@@ -35,7 +34,7 @@ export async function registerService(payload:
 // คือฟังก์ชันสำหรับการดึงข้อมูลของผู้ใช้งาน
 export async function fetchProfileService(token: string): Promise<{ user: User }> {
   try {
-    const res = await $fetch<{ user: User }>(`${baseURL}/profile`, {
+    const res = await $fetch<{ user: User }>(`${BASE_API_URL }/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     return res
