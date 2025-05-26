@@ -7,13 +7,14 @@ import (
 	"backend/validation"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
+
 )
 
 // คือฟังก์ชันที่จะจัดการกับการลงทะเบียนของผู้ใช้
 func HandleRegister(c *fiber.Ctx) error {
 	// ดึงข้อมูลจากร่างการส่งข้อมูลจากผู้ใช้
 	var body validation.RegisterRequest
-	// ถ้ามีข้อมูลที่ส่งมาผิดพลาดจะส่งข้อความผิดพลาดกลับไป
 	if err := c.BodyParser(&body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request format")
 	}
@@ -31,12 +32,11 @@ func HandleRegister(c *fiber.Ctx) error {
 	}
 	// สร้างข้อมูลผู้ใช้ใหม่ในฐานข้อมูล
 	if err := database.DB.Create(&user).Error; err != nil {
-		// ถ้ามีข้อมูลที่ส่งมาผิดพลาดจะส่งข้อความผิดพลาดกลับไป
 		return fiber.NewError(fiber.StatusInternalServerError, "Email or Username already in use")
 	}
-	// ส่งข้อความสำเร็จกลับไป
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "User registered successfully",
+		"user":    user,
 	})
 }
 
@@ -44,17 +44,14 @@ func HandleRegister(c *fiber.Ctx) error {
 func HandleLogin(c *fiber.Ctx) error {
 	// ดึงข้อมูลจากร่างการส่งข้อมูลจากผู้ใช้
 	var body validation.LoginRequest
-	// ถ้ามีข้อมูลที่ส่งมาผิดพลาดจะส่งข้อความผิดพลาดกลับไป
 	if err := c.BodyParser(&body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request")
 	}
-	// ตรวจสอบข้อมูลที่ส่งมาว่ามีความถูกต้องหรือไม่
 	if err := validation.ValidateLogin(body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 	// ค้นหาข้อมูลผู้ใช้ในฐานข้อมูล
 	var user models.User
-	// ถ้ามีข้อมูลที่ส่งมาผิดพลาดจะส่งข้อความผิดพลาดกลับไป
 	if err := database.DB.Where("email = ?", body.Email).First(&user).Error; err != nil {
 		return fiber.NewError(fiber.StatusUnauthorized, "Invalid credentials")
 	}
@@ -64,13 +61,48 @@ func HandleLogin(c *fiber.Ctx) error {
 	}
 	// สร้างข้อมูลผู้ใช้ใหม่ในฐานข้อมูล
 	token, err := utils.GenerateJWT(user.ID)
-	// ถ้ามีข้อมูลที่ส่งมาผิดพลาดจะส่งข้อความผิดพลาดกลับไป
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to generate token")
 	}
-	// ส่งข้อความสำเร็จกลับไป
 	return c.JSON(fiber.Map{
 		"message": "Login successful",
 		"token":   token,
+		"user":    user,
 	})
 }
+
+// คือฟังก์ชันที่จะจัดการกับการดึงข้อมูลผู้ใช้
+func HandleProfile(c *fiber.Ctx) error {
+
+	// ดึง token จากการส่งมาจากผู้ใช้
+	userToken, ok := c.Locals("user").(*jwt.Token)
+	if !ok {
+		return fiber.NewError(fiber.StatusUnauthorized, "Invalid token format")
+	}
+
+	// คือข้อมูลที่จะดึงออกมาจาก token
+	claims, ok := userToken.Claims.(jwt.MapClaims)
+	if !ok {
+		return fiber.NewError(fiber.StatusUnauthorized, "Invalid token claims")
+	}
+
+	// แปลง user_id เป็น float64 เพื่อใช้ในการค้นหาข้อมูลผู้ใช้
+	userIDFloat, ok := claims["user_id"].(float64)
+	if !ok {
+		return fiber.NewError(fiber.StatusUnauthorized, "Invalid user ID in token")
+	}
+
+	userID := uint(userIDFloat)
+
+	// ค้นหาข้อมูลผู้ใช้ในฐานข้อมูล
+	var user models.User
+	if err := database.DB.First(&user, userID).Error; err != nil {
+		return fiber.ErrNotFound
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Profile retrieved successfully",
+		"user":    user,
+	})
+}
+

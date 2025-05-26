@@ -4,6 +4,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// สร้างข้อมูลที่จะตรวจสอบว่าข้อมูลที่ส่งมาจากผู้ใช้ถูกต้องหรือไม่
 var validate = validator.New()
 
 type RegisterRequest struct {
