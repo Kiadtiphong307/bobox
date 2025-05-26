@@ -8,10 +8,11 @@ import (
 )
 
 // คือฟังก์ชันที่จะจัดการกับการสร้างข้อมูลผู้ใช้ใหม่
-func GenerateJWT(userID uint) (string, error) {
+func GenerateJWT(userID uint, role string) (string, error) {
 	// สร้างข้อมูลผู้ใช้ใหม่
 	claims := jwt.MapClaims{
 		"user_id": userID,
+		"role":    role,
 		"exp":     time.Now().Add(time.Hour * 72).Unix(),
 	}
 	// สร้างข้อมูลผู้ใช้ใหม่

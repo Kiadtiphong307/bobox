@@ -35,6 +35,8 @@ func ConnectDB() {
 	// ส่งข้อความสำเร็จกลับไป
 	log.Println("✅ Connected to MySQL")
 
-
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(
+		&models.User{},
+		&models.Product{},
+	)
 }

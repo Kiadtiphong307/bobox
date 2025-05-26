@@ -60,7 +60,7 @@ func HandleLogin(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusUnauthorized, "Incorrect password")
 	}
 	// สร้างข้อมูลผู้ใช้ใหม่ในฐานข้อมูล
-	token, err := utils.GenerateJWT(user.ID)
+	token, err := utils.GenerateJWT(user.ID, user.Role)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to generate token")
 	}

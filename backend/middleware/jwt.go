@@ -5,6 +5,7 @@ import (
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+	
 )
 
 // คือฟังก์ชันที่จะจัดการกับการปกป้องข้อมูลผู้ใช้
@@ -25,3 +26,4 @@ func jwtError(c *fiber.Ctx, err error) error {
 		"detail":  err.Error(),
 	})
 }
+
