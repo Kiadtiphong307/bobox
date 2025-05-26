@@ -6,12 +6,16 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 )
-
+// คือฟังก์ชันที่จะจัดการกับการสร้างข้อมูลผู้ใช้ใหม่
 func GenerateJWT(userID uint) (string, error) {
+	// สร้างข้อมูลผู้ใช้ใหม่
 	claims := jwt.MapClaims{
 		"user_id": userID,
+		// กำหนดระยะเวลาการใช้งานของข้อมูลผู้ใช้ใหม่
 		"exp":     time.Now().Add(time.Hour * 72).Unix(),
 	}
+	// สร้างข้อมูลผู้ใช้ใหม่ 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// ส่งข้อมูลผู้ใช้ใหม่กลับไป
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
